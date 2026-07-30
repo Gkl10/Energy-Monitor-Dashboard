@@ -1,0 +1,14 @@
+# Python virtual environments & cache
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Scraper temporary debug outputs
+debug_*.png
+temp_*.pdf
+
+# OS junk
+.DS_Store
+Thumbs.db

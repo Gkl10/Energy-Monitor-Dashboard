@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Monitor and analyze KSEB electricity consumption, production, import, peak demand, and dam storage levels with an intuitive daily dashboard.">
+  <meta name="robots" content="noindex">
+  <title>KSEB Energy Monitor Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+
+<body>
+
+  <!-- === HEADER === -->
+  <header class="header">
+    <div class="header__inner">
+      <!-- <div class="header__icon header__icon--square"></div> -->
+      <h1 class="header__title">KSEB Energy Monitor</h1>
+      <!-- <div class="header__icon header__icon--circle"></div> -->
+    </div>
+  </header>
+
+  <!-- === MAIN === -->
+  <main class="main" id="dashboard">
+
+    <!-- Gauge Card — latest consumption -->
+    <section class="card gauge-card animate-in" id="gauge-section">
+      <div class="gauge-wrapper">
+        <svg class="gauge-svg" viewBox="0 0 200 200">
+          <circle class="gauge-bg" cx="100" cy="100" r="80"></circle>
+          <circle class="gauge-fill" id="gauge-fill" cx="100" cy="100" r="80" stroke-dasharray="0 503"
+            stroke-linecap="round"></circle>
+        </svg>
+        <div class="gauge-center">
+          <div class="gauge-center__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+          </div>
+          <div class="gauge-center__value" id="gauge-value">—</div>
+          <div class="gauge-center__unit">MU</div>
+        </div>
+      </div>
+      <div class="gauge-label">
+        <div class="gauge-label__primary">Latest Consumption</div>
+        <div class="gauge-label__secondary" id="gauge-sub">—</div>
+      </div>
+    </section>
+
+    <!-- Unit legend -->
+    <div class="unit-legend animate-in">
+      <span class="unit-legend__item"><strong>MU</strong> = Million Units (1 MU = 10,00,000 kWh)</span>
+      <span class="unit-legend__sep">·</span>
+      <span class="unit-legend__item"><strong>MW</strong> = Megawatts</span>
+    </div>
+
+    <!-- Stat cards — Dam Storage -->
+    <section class="stats-grid animate-in">
+      <div class="card" id="dam-now-card">
+        <div class="stat-card__header">
+          <span class="stat-card__label">Dam Now</span>
+          <div class="stat-card__icon"></div>
+        </div>
+        <div class="stat-card__value" id="dam-now-value">—</div>
+        <div class="stat-card__change" id="dam-now-change"></div>
+      </div>
+      <div class="card" id="dam-before-card">
+        <div class="stat-card__header">
+          <span class="stat-card__label">Dam Today Last year</span>
+          <div class="stat-card__icon"></div>
+        </div>
+        <div class="stat-card__value" id="dam-before-value">—</div>
+        <div class="stat-card__change" id="dam-before-change"></div>
+      </div>
+    </section>
+
+    <!-- Stat cards — Peak & Import -->
+    <section class="stats-grid animate-in">
+      <div class="card" id="peak-card">
+        <div class="stat-card__header">
+          <span class="stat-card__label">Peak Demand</span>
+          <div class="stat-card__icon"></div>
+        </div>
+        <div class="stat-card__value" id="peak-value">—</div>
+        <div class="stat-card__change" id="peak-change"></div>
+      </div>
+      <div class="card" id="import-card">
+        <div class="stat-card__header">
+          <span class="stat-card__label">Net Import</span>
+          <div class="stat-card__icon"></div>
+        </div>
+        <div class="stat-card__value" id="import-value">—</div>
+        <div class="stat-card__change" id="import-change"></div>
+      </div>
+    </section>
+
+    <!-- Line chart — Consumption / Production / Import -->
+    <section class="card chart-card animate-in">
+      <h3 class="card__title">[Daily Energy Trends]</h3>
+      <div>
+        <canvas id="line-chart"></canvas>
+      </div>
+    </section>
+
+    <!-- Bar chart — Peak Demand -->
+    <section class="card chart-card animate-in">
+      <h3 class="card__title">[Peak Demand (MW)]</h3>
+      <div>
+        <canvas id="bar-chart"></canvas>
+      </div>
+    </section>
+
+    <!-- Metrics Table -->
+    <section class="card animate-in">
+      <h3 class="card__title">[All Daily Metrics]</h3>
+      <div class="table-wrapper">
+        <table class="metrics-table" id="metrics-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Consumption (MU)</th>
+              <th>Production (MU)</th>
+              <th>Import (MU)</th>
+              <th>Peak (MW)</th>
+              <th>Peak Time</th>
+              <th>Dam Now</th>
+              <th>Dam Last Year</th>
+            </tr>
+          </thead>
+          <tbody id="metrics-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tip Card -->
+    <section class="card tip-card animate-in">
+      <div class="tip-card__icon">
+        <div class="tip-card__icon-inner"></div>
+      </div>
+      <div>
+        <h4 class="tip-card__title">[Energy Tip]</h4>
+        <p class="tip-card__text" id="tip-text">Loading tip…</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Data from <strong>KSEB</strong> · Updated daily
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

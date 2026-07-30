@@ -1,0 +1,528 @@
+/* ===========================
+   KSEB Energy Monitor — Design System
+   Matches reference Figma slate/mono style
+   =========================== */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* --- Layer ordering --- */
+@layer reset, theme, base, components, utilities;
+
+/* --- Reset --- */
+@layer reset {
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+/* --- Theme tokens --- */
+@layer theme {
+  :root {
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-300: #cbd5e1;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+
+    --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
+    --shadow-lift: 0 8px 24px rgba(0, 0, 0, .12);
+    --transition: 0.25s cubic-bezier(.4, 0, .2, 1);
+  }
+}
+
+/* --- Base styles --- */
+@layer base {
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-mono);
+    background: var(--slate-200);
+    color: var(--slate-900);
+    min-height: 100dvh;
+    line-height: 1.5;
+  }
+}
+
+/* --- Components --- */
+@layer components {
+
+  /* === HEADER === */
+  .header {
+    background: #fff;
+    border-bottom: 4px solid var(--slate-400);
+    padding: 20px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header__inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header__icon {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--slate-700);
+    flex-shrink: 0;
+  }
+
+  /* .header__icon--square { border-radius: 2px; } */
+  /* .header__icon--circle { border-radius: 50%; } */
+  .header__title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--slate-900);
+  }
+
+  /* === MAIN LAYOUT === */
+  .main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* === CARD (base) === */
+  .card {
+    background: #fff;
+    border: 2px solid var(--slate-300);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .card--accent {
+    border-color: var(--slate-400);
+  }
+
+  .card__title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--slate-900);
+    margin-bottom: 16px;
+  }
+
+  /* === GAUGE (hero) === */
+  .gauge-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 28px 20px;
+    border-color: var(--slate-400);
+    border-bottom: 4px solid var(--slate-400);
+  }
+
+  .gauge-wrapper {
+    position: relative;
+    width: 192px;
+    height: 192px;
+  }
+
+  .gauge-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .gauge-bg {
+    fill: none;
+    stroke: var(--slate-300);
+    stroke-width: 12;
+  }
+
+  .gauge-fill {
+    fill: none;
+    stroke: var(--slate-600);
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dasharray 1s cubic-bezier(.4, 0, .2, 1);
+  }
+
+  .gauge-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gauge-center__icon {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--slate-600);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gauge-center__icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--slate-600);
+  }
+
+  .gauge-center__value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--slate-900);
+  }
+
+  .gauge-center__unit {
+    font-size: 0.85rem;
+    color: var(--slate-600);
+    margin-top: 4px;
+  }
+
+  .gauge-label {
+    text-align: center;
+  }
+
+  .gauge-label__primary {
+    font-size: 0.85rem;
+    color: var(--slate-600);
+  }
+
+  .gauge-label__secondary {
+    font-size: 0.75rem;
+    color: var(--slate-500);
+    margin-top: 4px;
+  }
+
+  /* === UNIT LEGEND === */
+  .unit-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--slate-50);
+    border: 1.5px solid var(--slate-300);
+    border-radius: var(--radius-md);
+    font-size: 0.78rem;
+    color: var(--slate-600);
+    flex-wrap: wrap;
+  }
+
+  .unit-legend__item strong {
+    color: var(--slate-900);
+    font-weight: 600;
+  }
+
+  .unit-legend__sep {
+    color: var(--slate-400);
+  }
+
+  /* === STAT CARDS GRID === */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .stat-card__label {
+    font-size: 0.8rem;
+    color: var(--slate-700);
+  }
+
+  .stat-card__icon {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--slate-600);
+    border-radius: 50%;
+  }
+
+  .stat-card__value {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--slate-900);
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+
+  .stat-card__change {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+  }
+
+  .stat-card__change-icon {
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--slate-600);
+    flex-shrink: 0;
+  }
+
+  .stat-card__change-value {
+    color: var(--slate-700);
+    font-weight: 500;
+  }
+
+  .stat-card__change-label {
+    color: var(--slate-500);
+  }
+
+  .change-up {
+    color: #16a34a;
+  }
+
+  .change-down {
+    color: #dc2626;
+  }
+
+  /* === CHART CARD === */
+  .chart-card {
+    padding: 20px;
+  }
+
+  .chart-card canvas {
+    width: 100% !important;
+    max-height: 220px;
+  }
+
+  /* === METRICS TABLE === */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .metrics-table th,
+  .metrics-table td {
+    padding: 10px 12px;
+    text-align: right;
+    border-bottom: 1px solid var(--slate-200);
+  }
+
+  .metrics-table th {
+    text-align: right;
+    font-weight: 600;
+    color: var(--slate-600);
+    background: var(--slate-50);
+    border-bottom: 2px solid var(--slate-300);
+    position: sticky;
+    top: 0;
+  }
+
+  .metrics-table th:first-child,
+  .metrics-table td:first-child {
+    text-align: left;
+    position: sticky;
+    left: 0;
+    background: #fff;
+    z-index: 1;
+  }
+
+  .metrics-table th:first-child {
+    background: var(--slate-50);
+    z-index: 2;
+  }
+
+  .metrics-table tr:hover td {
+    background: var(--slate-50);
+  }
+
+  .metrics-table tr:hover td:first-child {
+    background: var(--slate-100);
+  }
+
+  .metrics-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* === TIP CARD === */
+  .tip-card {
+    border-color: var(--slate-400);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .tip-card__icon {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--slate-700);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .tip-card__icon-inner {
+    width: 14px;
+    height: 14px;
+    background: var(--slate-700);
+    border-radius: 2px;
+  }
+
+  .tip-card__title {
+    font-weight: 600;
+    color: var(--slate-900);
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+  }
+
+  .tip-card__text {
+    font-size: 0.82rem;
+    color: var(--slate-700);
+    line-height: 1.6;
+  }
+
+  /* === FOOTER === */
+  .footer {
+    text-align: center;
+    padding: 12px 16px 32px;
+    font-size: 0.72rem;
+    color: var(--slate-500);
+  }
+
+  /* === ANIMATIONS === */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-in {
+    animation: fadeInUp 0.5s var(--transition) both;
+  }
+
+  .animate-in:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+
+  .animate-in:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .animate-in:nth-child(3) {
+    animation-delay: 0.15s;
+  }
+
+  .animate-in:nth-child(4) {
+    animation-delay: 0.2s;
+  }
+
+  .animate-in:nth-child(5) {
+    animation-delay: 0.25s;
+  }
+
+  .animate-in:nth-child(6) {
+    animation-delay: 0.3s;
+  }
+
+  .animate-in:nth-child(7) {
+    animation-delay: 0.35s;
+  }
+
+  /* === LOADING SKELETON === */
+  .skeleton {
+    background: linear-gradient(90deg, var(--slate-200) 25%, var(--slate-100) 50%, var(--slate-200) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+
+    100% {
+      background-position: -200% 0;
+    }
+  }
+}
+
+/* --- Utilities --- */
+@layer utilities {
+  @media (max-width: 600px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .gauge-wrapper {
+      width: 160px;
+      height: 160px;
+    }
+
+    .gauge-center__value {
+      font-size: 2rem;
+    }
+
+    .stat-card__value {
+      font-size: 1.3rem;
+    }
+
+    .header__title {
+      font-size: 1rem;
+    }
+  }
+}

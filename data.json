@@ -1,0 +1,106 @@
+[
+  {
+    "date": "2026-07-22",
+    "timestamp": "2026-07-30T09:19:31.497002",
+    "metrics": {
+      "consumption": 90.56,
+      "production": 6.95,
+      "import": 83.61,
+      "peak": 4720,
+      "peak_time": "07:12",
+      "dam_now": 29.14,
+      "dam_before": 65.02
+    }
+  },
+  {
+    "date": "2026-07-23",
+    "timestamp": "2026-07-30T09:19:27.700956",
+    "metrics": {
+      "consumption": 89.73,
+      "production": 7.99,
+      "import": 81.74,
+      "peak": 4809,
+      "peak_time": "07:17",
+      "dam_now": 29.37,
+      "dam_before": 66.5
+    }
+  },
+  {
+    "date": "2026-07-24",
+    "timestamp": "2026-07-30T09:19:24.003115",
+    "metrics": {
+      "consumption": 90.62,
+      "production": 10.15,
+      "import": 80.47,
+      "peak": 4734,
+      "peak_time": "07:18",
+      "dam_now": 29.58,
+      "dam_before": 68.46
+    }
+  },
+  {
+    "date": "2026-07-25",
+    "timestamp": "2026-07-30T09:19:19.192940",
+    "metrics": {
+      "consumption": 88.26,
+      "production": 12.32,
+      "import": 75.94,
+      "peak": 4699,
+      "peak_time": "07:38",
+      "dam_now": 29.6,
+      "dam_before": 70.419
+    }
+  },
+  {
+    "date": "2026-07-26",
+    "timestamp": "2026-07-30T09:19:15.445560",
+    "metrics": {
+      "consumption": 81.44,
+      "production": 10.14,
+      "import": 71.3,
+      "peak": 4307,
+      "peak_time": "07:37",
+      "dam_now": 29.74,
+      "dam_before": 72.785
+    }
+  },
+  {
+    "date": "2026-07-27",
+    "timestamp": "2026-07-30T09:19:12.030994",
+    "metrics": {
+      "consumption": 88.78,
+      "production": 12.66,
+      "import": 76.12,
+      "peak": 4775,
+      "peak_time": "07:20",
+      "dam_now": 29.84,
+      "dam_before": 73.83
+    }
+  },
+  {
+    "date": "2026-07-28",
+    "timestamp": "2026-07-30T09:19:08.625679",
+    "metrics": {
+      "consumption": 90.6,
+      "production": 13.9,
+      "import": 76.7,
+      "peak": 4741,
+      "peak_time": "07:20",
+      "dam_now": 30.33,
+      "dam_before": 74.39
+    }
+  },
+  {
+    "date": "2026-07-29",
+    "timestamp": "2026-07-30T09:19:05.634769",
+    "metrics": {
+      "consumption": 90.03,
+      "production": 20.88,
+      "import": 69.15,
+      "peak": 4676,
+      "peak_time": "07:11",
+      "dam_now": 31.365,
+      "dam_before": null
+    }
+  }
+]
