@@ -61,12 +61,12 @@ def main():
     print(f"\n[2/3] {new_count} new report(s) found. Syncing files and committing...\n")
 
     # Copy data.json into the dashboard folder so GitHub Pages serves fresh data
-    dashboard_json = os.path.join("dashboard", "data.json")
-    if os.path.isdir("dashboard"):
+    dashboard_json = os.path.join("docs", "data.json")
+    if os.path.isdir("docs"):
         shutil.copy("data.json", dashboard_json)
         print(f"  Copied data.json → {dashboard_json}")
     else:
-        print("  [WARN] 'dashboard/' folder not found — skipping dashboard sync.")
+        print("  [WARN] 'docs/' folder not found — skipping dashboard sync.")
         dashboard_json = None
 
     # ------------------------------------------------------------------ #
