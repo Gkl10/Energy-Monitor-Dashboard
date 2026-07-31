@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-          cache:'pip'
+          cache: 'pip'
 
       - name: Install System Dependencies (Tesseract OCR)
         run: |
@@ -35,6 +35,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Scraper Script
+        env:
+          # This pulls the variable you just created in GitHub Settings
+          SCRAPER_PROXY_URL: ${{ vars.SCRAPER_PROXY_URL }}
+          SCRAPER_DEBUG: "0"
         run: python scraper.py
 
       - name: Sync data.json to Dashboard folder

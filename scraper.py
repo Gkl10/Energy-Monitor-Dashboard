@@ -1,7 +1,9 @@
 import os
 import re
 import json
+import urllib.parse
 import requests
+from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 import pdfplumber
 import pytesseract
@@ -15,6 +17,48 @@ PAGE_URL = "https://kseb.in"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
+
+
+#
+# The Worker receives every request as:
+#   GET https://your-worker.workers.dev?url=<encoded-target-url>
+# and forwards it on behalf of the scraper, bypassing Cloudflare origin checks.
+# Leave unset to make direct connections (no proxy).
+# ---------------------------------------------------------------------------
+PROXY_URL = os.environ.get("SCRAPER_PROXY_URL", "").strip()
+
+# Set SCRAPER_DEBUG=1 (or "true" / "yes") to enable debug image dumps from OCR
+DEBUG_MODE = os.environ.get("SCRAPER_DEBUG", "").lower() in ("1", "true", "yes")
+
+
+def build_session() -> requests.Session:
+    """Create a requests.Session pre-configured with shared headers."""
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    if PROXY_URL:
+        print(f"[Proxy] Worker proxy enabled: {PROXY_URL}")
+    return session
+
+
+def smart_get(
+    url: str,
+    session: requests.Session,
+    stream: bool = False,
+    timeout: int = 30,
+) -> requests.Response:
+    """Perform an HTTP GET. If PROXY_URL is set, route through the Cloudflare Worker
+    by passing the real target URL as a ?url= query parameter.
+    Raises an HTTPError automatically on non-2xx responses."""
+    target_url = url
+
+    if PROXY_URL:
+        # Encode the destination URL and append it to the Worker endpoint
+        encoded_url = urllib.parse.quote(url, safe="")
+        target_url = f"{PROXY_URL}?url={encoded_url}"
+
+    response = session.get(target_url, stream=stream, timeout=timeout)
+    response.raise_for_status()
+    return response
 
 
 BOUNDING_BOXES_PIXELS = {
@@ -211,13 +255,15 @@ def main():
     # Store set of already scraped dates (e.g. {'2026-07-28', '2026-07-29'})
     scraped_dates = {entry.get("date") for entry in history if entry.get("date")}
 
-    # Step 2: Fetch webpage HTML and locate all PDF links
+    # Step 2: Build the HTTP session (proxy-aware) and fetch the main page
+    session = build_session()
+
     print(f" Fetching website report page: {PAGE_URL}")
-    response = requests.get(PAGE_URL, headers=HEADERS)
-    response.raise_for_status()
+    response = smart_get(PAGE_URL, session)
     soup = BeautifulSoup(response.text, "html.parser")
 
     # Locate all <a> tags that link to PDF uploads
+    # urljoin converts relative hrefs to absolute URLs so the proxy can forward them
     pdf_tags = soup.find_all("a", href=lambda h: h and "/uploads/Downloadtemsuppy/" in h)
 
     if not pdf_tags:
@@ -231,7 +277,8 @@ def main():
     MIN_YEAR = 2026
 
     for tag in pdf_tags:
-        pdf_url = tag["href"]
+        # Resolve relative hrefs (e.g. "/uploads/...") to fully-qualified URLs
+        pdf_url = urljoin(PAGE_URL, tag["href"])
         link_text = tag.text.strip()
 
         # Combine visible text and link URL to ensure we capture filenames like '28.07.2026.pdf'
@@ -260,10 +307,13 @@ def main():
         temp_pdf = f"temp_{formatted_date}.pdf"
 
         try:
-            # Download PDF file
-            pdf_bytes = requests.get(pdf_url, headers=HEADERS).content
+            # Download PDF file — routed through proxy if SCRAPER_PROXY_URL is set
+            print(f"   Downloading: {pdf_url}")
+            pdf_response = smart_get(pdf_url, session, stream=True, timeout=60)
             with open(temp_pdf, "wb") as f:
-                f.write(pdf_bytes)
+                for chunk in pdf_response.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
 
             # Run multi-box OCR extraction
             metrics = extract_ocr_from_pdf(temp_pdf)
