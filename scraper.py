@@ -1,7 +1,6 @@
 import os
 import re
 import json
-import urllib.parse
 import requests
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
@@ -18,47 +17,8 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
-
-#
-# The Worker receives every request as:
-#   GET https://your-worker.workers.dev?url=<encoded-target-url>
-# and forwards it on behalf of the scraper, bypassing Cloudflare origin checks.
-# Leave unset to make direct connections (no proxy).
-# ---------------------------------------------------------------------------
-PROXY_URL = os.environ.get("SCRAPER_PROXY_URL", "").strip()
-
 # Set SCRAPER_DEBUG=1 (or "true" / "yes") to enable debug image dumps from OCR
 DEBUG_MODE = os.environ.get("SCRAPER_DEBUG", "").lower() in ("1", "true", "yes")
-
-
-def build_session() -> requests.Session:
-    """Create a requests.Session pre-configured with shared headers."""
-    session = requests.Session()
-    session.headers.update(HEADERS)
-    if PROXY_URL:
-        print(f"[Proxy] Worker proxy enabled: {PROXY_URL}")
-    return session
-
-
-def smart_get(
-    url: str,
-    session: requests.Session,
-    stream: bool = False,
-    timeout: int = 30,
-) -> requests.Response:
-    """Perform an HTTP GET. If PROXY_URL is set, route through the Cloudflare Worker
-    by passing the real target URL as a ?url= query parameter.
-    Raises an HTTPError automatically on non-2xx responses."""
-    target_url = url
-
-    if PROXY_URL:
-        # Encode the destination URL and append it to the Worker endpoint
-        encoded_url = urllib.parse.quote(url, safe="")
-        target_url = f"{PROXY_URL}?url={encoded_url}"
-
-    response = session.get(target_url, stream=stream, timeout=timeout)
-    response.raise_for_status()
-    return response
 
 
 BOUNDING_BOXES_PIXELS = {
@@ -130,7 +90,6 @@ def preprocess_crop_for_ocr(pil_crop_img):
     return Image.fromarray(thresh)
 
 
-
 def extract_ocr_from_pdf(pdf_path):
     """Aligns entire PDF page to template.png and crops target bounding boxes for OCR."""
     extracted_metrics = {}
@@ -141,7 +100,7 @@ def extract_ocr_from_pdf(pdf_path):
         # 1. Render the entire PDF page as a high-res 300 DPI PIL image
         raw_page_img = first_page.to_image(resolution=300).original
 
-        # 2.  ALIGNMENT STEP: Auto-warp and fix paper rotation/shift
+        # 2. ALIGNMENT STEP: Auto-warp and fix paper rotation/shift
         aligned_page_img = align_image_to_template(raw_page_img, template_path="template.png")
 
         if DEBUG_MODE:
@@ -149,17 +108,17 @@ def extract_ocr_from_pdf(pdf_path):
 
         # 3. Crop target regions directly from the aligned 300 DPI image
         for label, px_box in BOUNDING_BOXES_PIXELS.items():
-            
-            # 1. Crop raw image box
+
+            # Crop raw image box
             raw_crop = aligned_page_img.crop(px_box)
 
-            # 2.  PREPROCESS CROP (Upscale + Binarize)
+            # Preprocess crop (Upscale + Binarize)
             processed_crop = preprocess_crop_for_ocr(raw_crop)
 
             if DEBUG_MODE:
                 processed_crop.save(f"debug_{label}.png")
 
-            # 4. Configure Tesseract OCR (include ':' if metric is a time field)
+            # Configure Tesseract OCR (include ':' if metric is a time field)
             if "time" in label.lower():
                 ocr_config = r'--psm 6 -c tessedit_char_whitelist=0123456789:APMapm'
             else:
@@ -170,9 +129,8 @@ def extract_ocr_from_pdf(pdf_path):
             #if DEBUG_MODE:
                 # print(f"DEBUG [{label}] Raw OCR Output: '{raw_ocr_text.strip()}'")
 
-            # 5. Clean and parse value (passing label so parser knows field type)
+            # Clean and parse value (passing label so parser knows field type)
             extracted_metrics[label] = parse_clean_value(raw_ocr_text, label)
-
 
         c = extracted_metrics.get("consumption")
         p = extracted_metrics.get("production")
@@ -216,8 +174,8 @@ def align_image_to_template(target_pil_img, template_path="template.png"):
     matches = sorted(matcher.match(des1, des2), key=lambda x: x.distance)
 
     good_matches = matches[:int(len(matches) * 0.15)]
-    
-    #  DIAGNOSTIC LOG
+
+    # DIAGNOSTIC LOG
     print(f"OpenCV Feature Matching: Found {len(good_matches)} good feature point(s).")
 
     if len(good_matches) < 4:
@@ -240,11 +198,12 @@ def align_image_to_template(target_pil_img, template_path="template.png"):
     print(" ALIGNMENT SUCCESSFUL: Page aligned and transformed!")
     return Image.fromarray(aligned_rgb)
 
+
 def main():
     # Step 1: Load existing data.json to identify already scraped dates
     history_file = "data.json"
     history = []
-    
+
     if os.path.exists(history_file):
         with open(history_file, "r") as f:
             try:
@@ -255,15 +214,13 @@ def main():
     # Store set of already scraped dates (e.g. {'2026-07-28', '2026-07-29'})
     scraped_dates = {entry.get("date") for entry in history if entry.get("date")}
 
-    # Step 2: Build the HTTP session (proxy-aware) and fetch the main page
-    session = build_session()
-
+    # Step 2: Fetch the main page
     print(f" Fetching website report page: {PAGE_URL}")
-    response = smart_get(PAGE_URL, session)
+    response = requests.get(PAGE_URL, headers=HEADERS, timeout=30)
+    response.raise_for_status()
     soup = BeautifulSoup(response.text, "html.parser")
 
     # Locate all <a> tags that link to PDF uploads
-    # urljoin converts relative hrefs to absolute URLs so the proxy can forward them
     pdf_tags = soup.find_all("a", href=lambda h: h and "/uploads/Downloadtemsuppy/" in h)
 
     if not pdf_tags:
@@ -307,9 +264,10 @@ def main():
         temp_pdf = f"temp_{formatted_date}.pdf"
 
         try:
-            # Download PDF file — routed through proxy if SCRAPER_PROXY_URL is set
+            # Download PDF file
             print(f"   Downloading: {pdf_url}")
-            pdf_response = smart_get(pdf_url, session, stream=True, timeout=60)
+            pdf_response = requests.get(pdf_url, headers=HEADERS, stream=True, timeout=60)
+            pdf_response.raise_for_status()
             with open(temp_pdf, "wb") as f:
                 for chunk in pdf_response.iter_content(chunk_size=8192):
                     if chunk:
@@ -344,8 +302,10 @@ def main():
         with open(history_file, "w") as f:
             json.dump(history, f, indent=2)
         print(f"\n Successfully added {new_entries_count} missing report(s) to data.json!")
+        return new_entries_count  # Signal to caller that new data was written
     else:
         print("\n All reports are up to date. No new data needed.")
+        return 0
 
 
 if __name__ == "__main__":
