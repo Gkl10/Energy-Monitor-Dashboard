@@ -1,0 +1,1 @@
+An automated scraper and web dashboard that tracks Kerala's daily electricity statistics—including energy generation, grid imports, peak demand, and total consumption—published by the Kerala State Electricity Board (KSEB).
