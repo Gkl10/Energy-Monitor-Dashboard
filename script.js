@@ -21,6 +21,12 @@
   // Sort by date ascending
   data.sort((a, b) => a.date.localeCompare(b.date));
 
+  // Rolling window: charts show only the last N days to stay readable
+  const CHART_WINDOW = 30;
+  const chartData = data.slice(-CHART_WINDOW);
+  const chartStart = chartData.length > 0 ? formatDate(chartData[0].date) : '';
+  const chartEnd   = chartData.length > 0 ? formatDate(chartData[chartData.length - 1].date) : '';
+
   const latest = data[data.length - 1];
   const prev = data.length > 1 ? data[data.length - 2] : null;
   const m = latest.metrics;
@@ -101,7 +107,17 @@
   };
 
   // ── Line Chart — Energy Trends ──
-  const lineLabels = data.map(d => formatDate(d.date));
+  const lineLabels = chartData.map(d => formatDate(d.date));
+
+  // Inject date-range subtitle under the chart title
+  const lineCard = document.getElementById('line-chart').closest('.chart-card');
+  if (lineCard) {
+    const sub = document.createElement('p');
+    sub.className = 'chart-range-label';
+    sub.textContent = `Showing ${chartData.length} day${chartData.length !== 1 ? 's' : ''} · ${chartStart} – ${chartEnd}`;
+    lineCard.querySelector('h3').after(sub);
+  }
+
   new Chart(document.getElementById('line-chart'), {
     type: 'line',
     data: {
@@ -109,7 +125,7 @@
       datasets: [
         {
           label: 'Consumption (MU)',
-          data: data.map(d => d.metrics.consumption),
+          data: chartData.map(d => d.metrics.consumption),
           borderColor: '#475569',
           backgroundColor: 'rgba(71,85,105,.08)',
           borderWidth: 2,
@@ -121,7 +137,7 @@
         },
         {
           label: 'Production (MU)',
-          data: data.map(d => d.metrics.production),
+          data: chartData.map(d => d.metrics.production),
           borderColor: '#16a34a',
           backgroundColor: 'rgba(22,163,74,.06)',
           borderWidth: 2,
@@ -133,7 +149,7 @@
         },
         {
           label: 'Import (MU)',
-          data: data.map(d => d.metrics.import),
+          data: chartData.map(d => d.metrics.import),
           borderColor: '#94a3b8',
           borderWidth: 2,
           borderDash: [5, 4],
@@ -173,6 +189,15 @@
     },
   });
 
+  // Inject date-range subtitle under the bar chart title
+  const barCard = document.getElementById('bar-chart').closest('.chart-card');
+  if (barCard) {
+    const sub = document.createElement('p');
+    sub.className = 'chart-range-label';
+    sub.textContent = `Showing ${chartData.length} day${chartData.length !== 1 ? 's' : ''} · ${chartStart} – ${chartEnd}`;
+    barCard.querySelector('h3').after(sub);
+  }
+
   // ── Bar Chart — Peak Demand ──
   new Chart(document.getElementById('bar-chart'), {
     type: 'bar',
@@ -181,7 +206,7 @@
       datasets: [
         {
           label: 'Peak (MW)',
-          data: data.map(d => d.metrics.peak),
+          data: chartData.map(d => d.metrics.peak),
           backgroundColor: '#94a3b8',
           hoverBackgroundColor: '#64748b',
           borderRadius: 4,

@@ -15,7 +15,6 @@ Requirements:
 """
 
 import os
-import shutil
 import subprocess
 import sys
 from datetime import datetime
@@ -58,16 +57,7 @@ def main():
         print("\nDone.")
         return
 
-    print(f"\n[2/3] {new_count} new report(s) found. Syncing files and committing...\n")
-
-    # Copy data.json into the dashboard folder so GitHub Pages serves fresh data
-    dashboard_json = os.path.join("docs", "data.json")
-    if os.path.isdir("docs"):
-        shutil.copy("data.json", dashboard_json)
-        print(f"  Copied data.json → {dashboard_json}")
-    else:
-        print("  [WARN] 'docs/' folder not found — skipping dashboard sync.")
-        dashboard_json = None
+    print(f"\n[2/3] {new_count} new report(s) found. Committing...\n")
 
     # ------------------------------------------------------------------ #
     # Step 3: Commit and push
@@ -75,11 +65,7 @@ def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
     commit_msg = f"auto: update daily energy metrics ({timestamp})"
 
-    files_to_stage = ["data.json"]
-    if dashboard_json and os.path.exists(dashboard_json):
-        files_to_stage.append(dashboard_json)
-
-    run_git(["add"] + files_to_stage)
+    run_git(["add", "data.json"])
     run_git(["commit", "-m", commit_msg])
     run_git(["push", "--set-upstream", "origin", "HEAD"])
 

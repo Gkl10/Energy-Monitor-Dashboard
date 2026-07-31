@@ -9,6 +9,11 @@ env/
 debug_*.png
 temp_*.pdf
 
+template.png
+
 # OS junk
 .DS_Store
 Thumbs.db
+
+# Prevent docs/data.json from being tracked (dashboard reads root data.json)
+docs/data.json

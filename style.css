@@ -334,9 +334,19 @@
     max-height: 220px;
   }
 
+  /* Chart window range label */
+  .chart-range-label {
+    font-size: 0.72rem;
+    color: var(--slate-400, #94a3b8);
+    letter-spacing: 0.02em;
+    margin: -4px 0 10px;
+  }
+
   /* === METRICS TABLE === */
   .table-wrapper {
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 420px; /* ~10 visible rows before scroll kicks in */
     -webkit-overflow-scrolling: touch;
   }
 
