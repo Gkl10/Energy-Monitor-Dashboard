@@ -100,12 +100,12 @@
       "peak": 4676,
       "peak_time": "07:11",
       "dam_now": 31.365,
-      "dam_before": null
+      "dam_before": 74.71
     }
   },
   {
     "date": "2026-07-30",
-    "timestamp": "2026-07-31T08:32:25.881904",
+    "timestamp": "2026-07-31T08:39:00.267893",
     "metrics": {
       "consumption": 90.7,
       "production": 22.99,
