@@ -115,5 +115,18 @@
       "dam_now": 32.6,
       "dam_before": 74.93
     }
+  },
+  {
+    "date": "2026-09-08",
+    "timestamp": "2026-09-09T14:34:27.477773",
+    "metrics": {
+      "consumption": 94.76,
+      "production": 22.85,
+      "import": 71.91,
+      "peak": 48510,
+      "peak_time": "05:44",
+      "dam_now": 63.55,
+      "dam_before": 0.03
+    }
   }
 ]
