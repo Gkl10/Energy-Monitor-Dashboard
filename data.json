@@ -123,10 +123,10 @@
       "consumption": 94.76,
       "production": 22.85,
       "import": 71.91,
-      "peak": 48510,
+      "peak": 4851,
       "peak_time": "05:44",
       "dam_now": 63.55,
-      "dam_before": 0.03
+      "dam_before": 80.03
     }
   }
 ]
