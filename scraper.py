@@ -33,7 +33,7 @@ BOUNDING_BOXES_PIXELS = {
 
 
 # UNCOMMENT & UPDATE THIS LINE IF RUNNING LOCALLY ON WINDOWS:
-# pytesseract.pytesseract.tesseract_cmd = r''
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 
 def parse_clean_value(raw_text, label=""):
