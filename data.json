@@ -148,11 +148,11 @@
     "metrics": {
       "consumption": 96.02,
       "production": 25.22,
-      "import": 70.8,
+      "import": 70.80,
       "peak": 5024,
       "peak_time": "06:44",
-      "dam_now": null,
-      "dam_before": 79.794
+      "dam_now": 63.04,
+      "dam_before": 79.79
     }
   }
 ]
