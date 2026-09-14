@@ -148,11 +148,24 @@
     "metrics": {
       "consumption": 96.02,
       "production": 25.22,
-      "import": 70.80,
+      "import": 70.8,
       "peak": 5024,
       "peak_time": "06:44",
       "dam_now": 63.04,
       "dam_before": 79.79
+    }
+  },
+  {
+    "date": "2026-09-13",
+    "timestamp": "2026-09-14T10:26:47.928837",
+    "metrics": {
+      "consumption": null,
+      "production": 18.4,
+      "import": 70.68,
+      "peak": 4983,
+      "peak_time": "10:21",
+      "dam_now": 62.34,
+      "dam_before": 78.96
     }
   }
 ]
