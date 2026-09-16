@@ -159,7 +159,7 @@
     "date": "2026-09-13",
     "timestamp": "2026-09-14T10:26:47.928837",
     "metrics": {
-      "consumption": null,
+      "consumption": 89.08,
       "production": 18.4,
       "import": 70.68,
       "peak": 4983,
