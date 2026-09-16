@@ -169,16 +169,16 @@
     }
   },
   {
-    "date": "2026-09-15",
-    "timestamp": "2026-09-16T08:53:47.992625",
+    "date": "2026-09-14",
+    "timestamp": "2026-09-15T10:26:47.928837",
     "metrics": {
-      "consumption": 94.08,
-      "production": 23.06,
-      "import": 71.02,
-      "peak": 4564,
-      "peak_time": "06:19",
-      "dam_now": 62.0,
-      "dam_before": 78.525
+      "consumption": 94.40,
+      "production": 21.64,
+      "import": 72.76,
+      "peak": 4965,
+      "peak_time": "06:44",
+      "dam_now": 62.21,
+      "dam_before": 78.80
     }
   }
 ]
