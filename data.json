@@ -264,7 +264,7 @@
     "timestamp": "2026-09-24T12:43:59.105276",
     "metrics": {
       "consumption": 96.01,
-      "production": null,
+      "production": 17.12,
       "import": 78.89,
       "peak": 4959,
       "peak_time": "06:44",
